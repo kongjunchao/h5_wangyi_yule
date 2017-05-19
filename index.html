@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no, email=no, adress=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <style>
+        *{margin: 0; padding: 0; -webkit-user-select: none;}
+        html, body{width: 100%; height: 100%; overflow: hidden;}
+        #start{width: 50px; height: 50px; position: absolute; bottom: 20px; right: 20px; background-color: #f70404; border-radius: 50px; color: #FFF; text-align: center; line-height: 50px; font-size: 14px;}
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="375" height="667"></canvas>
+<div id="start"></div>
+<script>
+    var canvas = document.getElementById('canvas'),
+        context = canvas.getContext('2d'),
+        start = document.getElementById('start'),
+        winWidth = document.body.clientWidth,
+        winHeight = document.body.clientHeight,
+        initWidth = 375,
+        initHeight = 667;
+
+    canvas.width = winWidth;
+    canvas.height = winHeight;
+
+    var imgArr = [];
+    for(var i = 0; i < 11; i++){
+        imgArr[i] = new Image();
+        imgArr[i].src = 'images/' + (i + 1) + '.jpg';
+    }
+
+    var infoArr = [
+        {
+            img : imgArr[0],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 275.5 * winWidth / initWidth,
+            endY : 22.5 * winHeight / initHeight,
+            endWidth : 76 * winWidth / initWidth,
+            endHeight : 134.5 * winHeight / initHeight
+        },
+        {
+            img : imgArr[1],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 157 * winWidth / initWidth,
+            endY : 263.5 * winHeight / initHeight,
+            endWidth : 32 * winWidth / initWidth,
+            endHeight : 55 * winHeight / initHeight
+        },
+        {
+            img : imgArr[2],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 170 * winWidth / initWidth,
+            endY : 92 * winHeight / initHeight,
+            endWidth : 58 * winWidth / initWidth,
+            endHeight : 100 * winHeight / initHeight
+        },
+        {
+            img : imgArr[3],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 77 * winWidth / initWidth,
+            endY : 186.5 * winHeight / initHeight,
+            endWidth : 52 * winWidth / initWidth,
+            endHeight : 79.5 * winHeight / initHeight
+        },
+        {
+            img : imgArr[4],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 71 * winWidth / initWidth,
+            endY : 272 * winHeight / initHeight,
+            endWidth : 38 * winWidth / initWidth,
+            endHeight : 64 * winHeight / initHeight
+        },
+        {
+            img : imgArr[5],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 163 * winWidth / initWidth,
+            endY : 201.5 * winHeight / initHeight,
+            endWidth : 23 * winWidth / initWidth,
+            endHeight : 40 * winHeight / initHeight
+        },
+        {
+            img : imgArr[6],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 268 * winWidth / initWidth,
+            endY : 162.5 * winHeight / initHeight,
+            endWidth : 29.5 * winWidth / initWidth,
+            endHeight : 53.5 * winHeight / initHeight
+        },
+        {
+            img : imgArr[7],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 266 * winWidth / initWidth,
+            endY : 527.5 * winHeight / initHeight,
+            endWidth : 20.5 * winWidth / initWidth,
+            endHeight : 34 * winHeight / initHeight
+        },
+        {
+            img : imgArr[8],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 80.5 * winWidth / initWidth,
+            endY : 56.5 * winHeight / initHeight,
+            endWidth : 17.5 * winWidth / initWidth,
+            endHeight : 31 * winHeight / initHeight
+        },
+        {
+            img : imgArr[9],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 225 * winWidth / initWidth,
+            endY : 42 * winHeight / initHeight,
+            endWidth : 42 * winWidth / initWidth,
+            endHeight : 82 * winHeight / initHeight
+        },
+        {
+            img : imgArr[10],
+            startX : 0,
+            startY : 0,
+            startWidth : winWidth,
+            startHeight : winHeight,
+            endX : 0 * winWidth / initWidth,
+            endY : 0 * winHeight / initHeight,
+            endWidth : 0 * winWidth / initWidth,
+            endHeight : 0 * winHeight / initHeight
+        }
+    ];
+
+    document.addEventListener('touchmove', function(e){
+        e.stopPropagation();
+        e.preventDefault();
+    }, false)
+
+    var index = 0;
+        startX = infoArr[index].startX,
+        startY = infoArr[index].startY,
+        startWidth = infoArr[index].startWidth,
+        startHeight = infoArr[index].startHeight,
+        endX = infoArr[index].endX,
+        endY = infoArr[index].endY,
+        endWidth = infoArr[index].endWidth,
+        endHeight = infoArr[index].endHeight,
+        stepNum = 150,
+        xStep = Math.abs((infoArr[index].endX - infoArr[index].startX) / stepNum),
+        yStep = Math.abs((infoArr[index].endY - infoArr[index].startY) / stepNum),
+        widthStep = Math.abs((infoArr[index].endWidth - infoArr[index].startWidth) / stepNum),
+        heightStep = Math.abs((infoArr[index].endHeight - infoArr[index].startHeight) / stepNum),
+        a = null,
+        step = function(){
+            if(index === infoArr.length - 1){
+                return;
+            }
+            startX = startX + xStep;
+            startY = startY + yStep;
+            startWidth = startWidth - widthStep;
+            startHeight = startHeight - heightStep;
+            context.fillRect(0, 0, winWidth, winHeight);
+            //绘制底图
+            context.drawImage(infoArr[index + 1].img, (-winWidth * endX / endWidth) + (winWidth * startX / endWidth), (-winHeight * endY / endHeight) + (winHeight * startY / endHeight), winWidth * startWidth / endWidth, winHeight * startHeight / endHeight);
+            //绘制当前图片
+            if(stepNum > 30){
+                context.drawImage(infoArr[index].img, startX, startY, startWidth, startHeight);
+            }
+            stepNum--;
+            a = requestAnimationFrame(step);
+            if(startWidth <= endWidth || startHeight <= endHeight || stepNum <= 0){
+                index++;
+                if(index < infoArr.length - 1){
+                    startX = infoArr[index].startX;
+                    startY = infoArr[index].startY;
+                    startWidth = infoArr[index].startWidth;
+                    startHeight = infoArr[index].startHeight;
+                    endX = infoArr[index].endX;
+                    endY = infoArr[index].endY;
+                    endWidth = infoArr[index].endWidth;
+                    endHeight = infoArr[index].endHeight;
+                    stepNum = 150;
+                    xStep = Math.abs((infoArr[index].endX - infoArr[index].startX) / stepNum);
+                    yStep = Math.abs((infoArr[index].endY - infoArr[index].startY) / stepNum);
+                    widthStep = Math.abs((infoArr[index].endWidth - infoArr[index].startWidth) / stepNum);
+                    heightStep = Math.abs((infoArr[index].endHeight - infoArr[index].startHeight) / stepNum);
+                }
+            }
+        };
+
+    imgArr[0].onload = function(){
+        context.drawImage(infoArr[index].img, startX, startY, startWidth, startHeight);
+    }
+
+    start.addEventListener('touchstart', function(){
+        if(index < infoArr.length - 1){
+            step();
+        }
+    }, false)
+
+    start.addEventListener('touchend', function(){
+        window.cancelAnimationFrame(a);
+    }, false)
+
+</script>
+</body>
+</html>
